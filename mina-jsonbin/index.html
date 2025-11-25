@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINA - MANUTENÇÃO COMPARTILHADO</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMCAxMEg0MFY0MEgxMFYxMFoiIGZpbGw9IiMwMDc4Q0QiLz48cGF0aCBkPSJNNjAgMTBINzBWNDBINjBWMTBaIiBmaWxsPSIjMDA3OENEIi8+PHBhdGggZD0iTTEwMCAxMEg5MFY0MEgxMDBWMTBaIiBmaWxsPSIjMDA3OENEIi8+PHBhdGggZD0iTTEzMCAxMEgxMjBWNDBIMTMwVjEwWiIgZmlsbD0iIzAwNzhDRCIvPjxwYXRoIGQ9Ik0xNjAgMTBIMTUwVjQwSDE2MFYxMFoiIGZpbGw9IiMwMDc4Q0QiLz48dGV4dCB4PSIyMCIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwNzhDRCI+U1RSQVRPUzwvdGV4dD48L3N2Zz4=" alt="Logomarca" />
+            </div>
+            <div class="header-info">
+                <h1>STATUS - MINA MANUTENÇÃO</h1>
+                <div class="connection-status">
+                    <span id="statusConexao" class="status-offline">🔴 Offline</span>
+                    <button id="btnAtualizar" class="btn-refresh">🔄 Atualizar</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <form id="equipamentoForm">
+                    <div class="form-group">
+                        <label for="nomeEquip">PAINEL DE OPERAÇÃO:</label>
+                        <input type="text" id="nomeEquip" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="statusEquip">Status:</label>
+                        <select id="statusEquip" required>
+                            <option value="" disabled selected>Selecione o status</option>
+                            <option value="parado">Parado</option>
+                            <option value="liberado">Liberado</option>
+                            <option value="standby">Standby</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="causaParada">EQUIPAMENTO /CAUSA:</label>
+                        <input type="text" id="causaParada" placeholder="Equipamento e a causa (se aplicável)" />
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="horaInicio">Horário Início:</label>
+                            <input type="time" id="horaInicio" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="horaFim">Horário Fim:</label>
+                            <input type="time" id="horaFim" />
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn-primary">Cadastrar</button>
+                        <button type="button" id="limparBtn" class="btn-secondary">Limpar</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="table-section">
+                <div class="section-header">
+                    <h2>STATUS MINA - DADOS COMPARTILHADOS</h2>
+                    <div class="last-update">
+                        Última atualização: <span id="lastUpdate">--:--:--</span>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="relatorioEquip">
+                        <thead>
+                            <tr>
+                                <th>Equipamento</th>
+                                <th>Status</th>
+                                <th>Causa da Parada</th>
+                                <th>Horário Início</th>
+                                <th>Horário Fim</th>
+                                <th>Data e Hora Cadastro</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dados carregados do JSONBin -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <span>Carregando dados...</span>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Sistema MINA - Dados compartilhados via JSONBin.io</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
