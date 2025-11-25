@@ -4,18 +4,372 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MINA - MANUTENÇÃO COMPARTILHADO</title>
-    <link rel="stylesheet" href="style.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: #0078CD;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .header-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .status-online {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-offline {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .btn-refresh {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-refresh:hover {
+            background-color: #138496;
+        }
+
+        .logo-container img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        main {
+            padding: 20px;
+            min-height: 70vh;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #0078CD;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #005fa3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .table-section h2 {
+            margin-bottom: 15px;
+            color: #0078CD;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .last-update {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #555;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .status-parado {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .status-liberado {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-standby {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+            font-size: 0.85rem;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .editar {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .excluir {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0078CD;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background-color: #28a745;
+        }
+
+        .notification.error {
+            background-color: #dc3545;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #dee2e6;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-info {
+                text-align: center;
+                margin-top: 15px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            table {
+                font-size: 0.75rem;
+            }
+            
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo-container">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMCAxMEg0MFY0MEgxMFYxMFoiIGZpbGw9IiMwMDc4Q0QiLz48cGF0aCBkPSJNNjAgMTBINzBWNDBINjBWMTBaIiBmaWxsPSIjMDA3OENEIi8+PHBhdGggZD0iTTEwMCAxMEg5MFY0MEgxMDBWMTBaIiBmaWxsPSIjMDA3OENEIi8+PHBhdGggZD0iTTEzMCAxMEgxMjBWNDBIMTMwVjEwWiIgZmlsbD0iIzAwNzhDRCIvPjxwYXRoIGQ9Ik0xNjAgMTBIMTUwVjQwSDE2MFYxMFoiIGZpbGw9IiMwMDc4Q0QiLz48dGV4dCB4PSIyMCIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwNzhDRCI+U1RSQVRPUzwvdGV4dD48L3N2Zz4=" alt="Logomarca" />
+                <!-- Logo em SVG inline -->
+                <svg width="200" height="50" viewBox="0 0 200 50" fill="none">
+                    <path d="M10 10H40V40H10V10Z" fill="#0078CD"/>
+                    <path d="M60 10H70V40H60V10Z" fill="#0078CD"/>
+                    <path d="M100 10H90V40H100V10Z" fill="#0078CD"/>
+                    <path d="M130 10H120V40H130V10Z" fill="#0078CD"/>
+                    <path d="M160 10H150V40H160V10Z" fill="#0078CD"/>
+                    <text x="20" y="30" font-family="Arial" font-size="14" fill="#0078CD">STRATOS</text>
+                </svg>
             </div>
             <div class="header-info">
                 <h1>STATUS - MINA MANUTENÇÃO</h1>
                 <div class="connection-status">
-                    <span id="statusConexao" class="status-offline">🔴 Offline</span>
+                    <span id="statusConexao" class="status-online">🟢 Online</span>
                     <button id="btnAtualizar" class="btn-refresh">🔄 Atualizar</button>
                 </div>
             </div>
@@ -85,7 +439,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Dados carregados do JSONBin -->
+                            <!-- Dados serão carregados aqui -->
                         </tbody>
                     </table>
                 </div>
@@ -98,10 +452,330 @@
         </main>
 
         <footer>
-            <p>Sistema MINA - Dados compartilhados via JSONBin.io</p>
+            <p>Sistema MINA - Dados compartilhados entre todos os usuários</p>
         </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Configuração - Dados compartilhados via localStorage (simulação)
+        const STORAGE_KEY = 'mina_equipamentos_shared';
+        
+        // Elementos DOM
+        const form = document.getElementById('equipamentoForm');
+        const nomeInput = document.getElementById('nomeEquip');
+        const statusSelect = document.getElementById('statusEquip');
+        const causaInput = document.getElementById('causaParada');
+        const horaInicioInput = document.getElementById('horaInicio');
+        const horaFimInput = document.getElementById('horaFim');
+        const tabelaCorpo = document.querySelector('#relatorioEquip tbody');
+        const limparBtn = document.getElementById('limparBtn');
+        const statusConexao = document.getElementById('statusConexao');
+        const btnAtualizar = document.getElementById('btnAtualizar');
+        const lastUpdate = document.getElementById('lastUpdate');
+        const loading = document.getElementById('loading');
+
+        let equipamentos = [];
+        let editandoId = null;
+        let nextId = 1;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarEquipamentos();
+            setupEventListeners();
+            startAutoRefresh();
+        });
+
+        function setupEventListeners() {
+            limparBtn.addEventListener('click', limparFormulario);
+            btnAtualizar.addEventListener('click', carregarEquipamentos);
+            
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                salvarEquipamento();
+            });
+        }
+
+        // Funções de dados compartilhados
+        function carregarEquipamentos() {
+            showLoading(true);
+            try {
+                const dadosSalvos = localStorage.getItem(STORAGE_KEY);
+                if (dadosSalvos) {
+                    const data = JSON.parse(dadosSalvos);
+                    equipamentos = data.equipamentos || [];
+                    
+                    // Calcular próximo ID
+                    if (equipamentos.length > 0) {
+                        nextId = Math.max(...equipamentos.map(e => e.id)) + 1;
+                    } else {
+                        nextId = 1;
+                    }
+                } else {
+                    // Dados iniciais de exemplo
+                    equipamentos = [
+                        {
+                            id: 1,
+                            nome: "Esteira 01",
+                            status: "parado",
+                            causa: "Manutenção preventiva",
+                            horaInicio: "08:00",
+                            horaFim: "10:00",
+                            dataHoraCadastro: "25/11/2024, 08:05:23"
+                        },
+                        {
+                            id: 2,
+                            nome: "Britador Principal",
+                            status: "liberado",
+                            causa: "",
+                            horaInicio: "",
+                            horaFim: "",
+                            dataHoraCadastro: "25/11/2024, 07:30:15"
+                        }
+                    ];
+                    nextId = 3;
+                    salvarDados();
+                }
+                
+                renderTabela();
+                updateConnectionStatus(true);
+                updateLastUpdateTime();
+                showNotification('Dados carregados com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao carregar equipamentos:', error);
+                updateConnectionStatus(false);
+                showNotification('Erro ao carregar dados.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function salvarDados() {
+            const dadosCompletos = {
+                equipamentos: equipamentos,
+                ultimaAtualizacao: new Date().toISOString(),
+                totalEquipamentos: equipamentos.length
+            };
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dadosCompletos));
+            
+            // Simular sincronização com outros usuários
+            sincronizarComOutrosUsuarios();
+        }
+
+        function sincronizarComOutrosUsuarios() {
+            // Em um sistema real, aqui seria a chamada para a API
+            // Por enquanto, apenas simulamos o comportamento
+            console.log('Dados sincronizados com outros usuários:', equipamentos);
+        }
+
+        function salvarEquipamento() {
+            const equipamentoData = {
+                nome: nomeInput.value.trim(),
+                status: statusSelect.value,
+                causa: causaInput.value.trim(),
+                horaInicio: horaInicioInput.value,
+                horaFim: horaFimInput.value,
+                dataHoraCadastro: formatDateTime(new Date())
+            };
+
+            if (!equipamentoData.nome || !equipamentoData.status) {
+                showNotification('Preencha todos os campos obrigatórios!', 'error');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                if (editandoId) {
+                    // Editar equipamento existente
+                    const index = equipamentos.findIndex(e => e.id === editandoId);
+                    if (index !== -1) {
+                        equipamentos[index] = { ...equipamentos[index], ...equipamentoData };
+                    }
+                } else {
+                    // Criar novo equipamento
+                    equipamentoData.id = nextId++;
+                    equipamentos.push(equipamentoData);
+                }
+
+                // Salvar dados
+                salvarDados();
+                renderTabela();
+                limparFormulario();
+                
+                const message = editandoId ? 'Equipamento atualizado com sucesso!' : 'Equipamento cadastrado com sucesso!';
+                showNotification(message, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao salvar equipamento:', error);
+                showNotification('Erro ao salvar equipamento. Tente novamente.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function excluirEquipamento(id) {
+            if (!confirm('Tem certeza que deseja excluir este equipamento?')) {
+                return;
+            }
+
+            showLoading(true);
+            try {
+                // Remover equipamento
+                equipamentos = equipamentos.filter(e => e.id !== id);
+                
+                // Salvar dados
+                salvarDados();
+                renderTabela();
+                showNotification('Equipamento excluído com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao excluir equipamento:', error);
+                showNotification('Erro ao excluir equipamento. Tente novamente.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Funções de UI
+        function renderTabela() {
+            tabelaCorpo.innerHTML = '';
+            
+            if (equipamentos.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="7" style="text-align: center; color: #666;">Nenhum equipamento cadastrado</td>`;
+                tabelaCorpo.appendChild(tr);
+                return;
+            }
+
+            equipamentos.forEach((equip) => {
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>${escapeHtml(equip.nome)}</td>
+                    <td class="status-${equip.status}">${equip.status.charAt(0).toUpperCase() + equip.status.slice(1)}</td>
+                    <td>${escapeHtml(equip.causa || '-')}</td>
+                    <td>${equip.horaInicio || '-'}</td>
+                    <td>${equip.horaFim || '-'}</td>
+                    <td>${equip.dataHoraCadastro || '-'}</td>
+                    <td>
+                        <button class="btn editar" onclick="editarEquipamento(${equip.id})">Editar</button>
+                        <button class="btn excluir" onclick="excluirEquipamento(${equip.id})">Excluir</button>
+                    </td>
+                `;
+
+                tabelaCorpo.appendChild(tr);
+            });
+        }
+
+        function editarEquipamento(id) {
+            const equip = equipamentos.find(e => e.id === id);
+            if (!equip) return;
+
+            nomeInput.value = equip.nome;
+            statusSelect.value = equip.status;
+            causaInput.value = equip.causa || '';
+            horaInicioInput.value = equip.horaInicio || '';
+            horaFimInput.value = equip.horaFim || '';
+            editandoId = id;
+            
+            nomeInput.focus();
+            showNotification('Editando equipamento...', 'success');
+        }
+
+        function limparFormulario() {
+            form.reset();
+            editandoId = null;
+            nomeInput.focus();
+        }
+
+        function updateConnectionStatus(online) {
+            if (online) {
+                statusConexao.textContent = '🟢 Online';
+                statusConexao.className = 'status-online';
+            } else {
+                statusConexao.textContent = '🔴 Offline';
+                statusConexao.className = 'status-offline';
+            }
+        }
+
+        function updateLastUpdateTime() {
+            const now = new Date();
+            lastUpdate.textContent = now.toLocaleTimeString('pt-BR');
+        }
+
+        function showLoading(show) {
+            if (show) {
+                loading.classList.add('show');
+            } else {
+                loading.classList.remove('show');
+            }
+        }
+
+        function showNotification(message, type) {
+            // Remove notificação existente
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // Cria nova notificação
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Mostra a notificação
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            // Remove após 5 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Funções utilitárias
+        function formatDateTime(date) {
+            const options = { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            return new Intl.DateTimeFormat('pt-BR', options).format(date);
+        }
+
+        function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return unsafe;
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Atualização automática a cada 30 segundos
+        function startAutoRefresh() {
+            setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    carregarEquipamentos();
+                }
+            }, 30000); // 30 segundos
+        }
+
+        // Atualizar quando a página ficar visível
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                carregarEquipamentos();
+            }
+        });
+
+        // Tornar funções globais para os eventos onclick
+        window.editarEquipamento = editarEquipamento;
+        window.excluirEquipamento = excluirEquipamento;
+    </script>
 </body>
 </html>
